@@ -1,0 +1,37 @@
+package main
+
+import (
+	"database/sql"
+	"fmt"
+
+	"github.com/google/uuid"
+
+	_ "github.com/lib/pq"
+)
+
+type Album struct {
+	ID     uuid.UUID `json:"id"`
+	Title  string    `json:"title"`
+	Artist string    `json:"artist"`
+	Price  float64   `json:"price"`
+}
+
+func main() {
+	// Koneksi ke database PostgreSQL
+	connStr := "user=postgres password=admin dbname=challange_db sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	// Coba melakukan koneksi ke database
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println("Koneksi sukses!")
+
+	// Sekarang Anda dapat melakukan operasi-operasi database lainnya, seperti query atau insert data.
+}

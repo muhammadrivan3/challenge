@@ -1,0 +1,59 @@
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+)
+
+const (
+	host     = "localhost"
+	port     = 5432
+	user     = "postgres"
+	password = "admin"
+	dbname   = "challange_db"
+)
+
+func main() {
+	// Create a connection string to PostgreSQL
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
+
+	// Open a connection to the database
+	db, err := gorm.Open("postgres", connStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	// Automigrate the 'Car' and 'Order' tables (create if they don't exist)
+	db.AutoMigrate(&Car{}, &Order{})
+
+	fmt.Println("Table migration successful!")
+
+	// Now you can use the 'Car' and 'Order' models to perform CRUD operations
+}
+
+// Car struct represents the 'cars' table
+type Car struct {
+	gorm.Model
+	CarID     int
+	CarName   string  `gorm:"size:50;not null"`
+	DayRate   float64 `gorm:"not null"`
+	MonthRate float64 `gorm:"not null"`
+	Image     string  `gorm:"size:256;not null"`
+}
+
+// Order struct represents the 'orders' table
+type Order struct {
+	gorm.Model
+	OrderID         int
+	CarID           int    `gorm:"not null"`
+	OrderDate       string `gorm:"type:date;not null"`
+	PickupDate      string `gorm:"type:date;not null"`
+	DropoffDate     string `gorm:"type:date;not null"`
+	PickupLocation  string `gorm:"size:50;not null"`
+	DropoffLocation string `gorm:"size:50;not null"`
+}
