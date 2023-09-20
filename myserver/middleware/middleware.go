@@ -25,7 +25,70 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&models.Car{}, &models.Orders{})
+	db.AutoMigrate(&models.Car{}, &models.Orders{}, &models.Users{})
+	// Check if the Users table is empty
+	var count int64
+	db.Model(&models.Users{}).Count(&count)
+
+	if count == 0 {
+		// Insert initial data into the Users table
+		initialUsers := []models.Users{
+			{Username: "challenge@gmail.com", Password: "challenge123"},
+			// Add more initial users as needed
+		}
+
+		for _, user := range initialUsers {
+			db.Create(&user)
+		}
+
+		fmt.Println("Initialized Users table with data.")
+	} else {
+		fmt.Println("Users table already contains data.")
+	}
+}
+
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+	var user User
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil {
+		http.Error(w, "Gagal menguraikan data masukan", http.StatusBadRequest)
+		return
+	}
+	// Mencari pengguna berdasarkan username di database
+	var dbUser User
+	result := db.Where("username = ?", user.Username).First(&dbUser)
+	if result.Error != nil {
+		// Pengguna tidak ditemukan
+		http.Error(w, "Login gagal. Username tidak ditemukan.", http.StatusUnauthorized)
+		return
+	}
+
+	// Membandingkan kata sandi yang dihash dari database dengan kata sandi yang diterima dari permintaan
+	if dbUser.Password == user.Password {
+		// Otentikasi berhasil, kirimkan respons yang sesuai (misalnya, token JWT dalam kasus nyata).
+		// Anda perlu mengimplementasikan logika token JWT yang lebih lengkap dalam lingkungan produksi.
+		token := "contoh-token-jwt"
+
+		responseData := struct {
+			Token string `json:"token"`
+		}{Token: token}
+
+		w.Header().Set("Content-Type", "application/json")
+		err = json.NewEncoder(w).Encode(responseData)
+		if err != nil {
+			http.Error(w, "Gagal mengirim respons", http.StatusInternalServerError)
+			return
+		}
+	} else {
+		// Kata sandi tidak cocok
+		http.Error(w, "Login gagal. Kata sandi salah.", http.StatusUnauthorized)
+		return
+	}
 }
 
 func GetCars(w http.ResponseWriter, r *http.Request) {

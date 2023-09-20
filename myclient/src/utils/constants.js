@@ -1,0 +1,1 @@
+const bgPrimary = "#242426";

@@ -10,6 +10,11 @@ import (
 //		Make      string
 //		ModelName string
 //	}
+type Users struct {
+	gorm.Model
+	Username string `gorm:"not null"`
+	Password string `gorm:"not null"`
+}
 type Car struct {
 	gorm.Model
 	CarID     int

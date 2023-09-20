@@ -7,7 +7,8 @@ import (
 
 func Router() *mux.Router {
 	router := mux.NewRouter()
-
+	//Simple authentication
+	router.HandleFunc("/api/v1/users/login", middleware.LoginHandler).Methods("POST")
 	// Routes for cars
 	router.HandleFunc("/api/v1/cars", middleware.GetCars).Methods("GET")
 	router.HandleFunc("/api/v1/cars/{id}", middleware.GetCar).Methods("GET")

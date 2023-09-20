@@ -13,11 +13,16 @@
     "@chakra-ui/react": "^2.8.1",
     "@headlessui/react": "^1.7.17",
     "axios": "^1.5.0",
+    "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-maps": "^9.4.5",
+    "react-intersection-observer": "^9.5.2",
     "react-modal": "^3.16.1",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "react-tilt": "^1.0.2",
+    "sass": "^1.67.0",
+    "swiper": "^10.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
